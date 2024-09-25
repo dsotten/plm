@@ -1,19 +1,7 @@
-import re
 from collections import defaultdict, Counter
-import random
-import os
 import re
 import math
-import json
-import javalang
 import pickle
-
-dataset = []
-with open("../data/methods_30k.json", 'r', encoding='utf-8') as f:
-    for line in f:
-       line = json.loads(line)
-       line = line["content"]
-       dataset.append(line)
 
 class NGramModel:
     def __init__(self, n):
@@ -22,19 +10,20 @@ class NGramModel:
         self.count_distribution = Counter()
     
 
-    def tokenize_java_code(self,code):
+    def split_code_tokens(self, code):
+        # code is already tokenized in methods_10k.txt
         try:
-            tokens = list(javalang.tokenizer.tokenize(code))
-            tokens = [code.value for code in tokens]
+            tokens = code.split() #list(javalang.tokenizer.tokenize(code))
+            tokens = [code for code in tokens]
             return tokens
         except Exception as e:
             raise Exception from e
+
     def train(self, corpus):
         for method in corpus:
             try:
-                #tokens = self.tokenize_java_code(method)
-                tokens = methods
-		padded_tokens = ['<s>'] * (self.n - 1) + tokens + ['</s>']
+                tokens = self.split_code_tokens(method)
+                padded_tokens = ['<s>'] * (self.n - 1) + tokens + ['</s>']
                 for i in range(len(padded_tokens) - self.n + 1):
                     context = tuple(padded_tokens[i:i + self.n - 1])
                     next_token = padded_tokens[i + self.n -1 ]
@@ -64,7 +53,7 @@ class NGramModel:
 
     def predict(self, context):
         context = tuple(context[-(self.n - 1):])
-        if context in self.ngrams:
+        if self.ngrams[context] and context in self.ngrams:
             return max(self.ngrams[context], key=self.ngrams[context].get)
         else:
             return '<UNK>'
@@ -84,7 +73,7 @@ class NGramModel:
         epsilon = 1e-10
         for sentence in corpus:
             try :
-                tokens = sentence #lf.tokenize_java_code(sentence)
+                tokens = self.split_code_tokens(sentence)
             except:
                 continue
             padded_sentence = ['<s>'] * (self.n - 1) + tokens + ['</s>']
@@ -101,6 +90,11 @@ class NGramModel:
         return math.pow(2, perplexity / N)
 
 if __name__ == "__main__":
+    dataset = []
+    with open("../data/methods_30k.txt", 'r', encoding='utf-8') as f:
+        for line in f:
+            dataset.append(line)
+
     num_classes = 500 # as per instructions
     corpus = dataset[:num_classes]
 

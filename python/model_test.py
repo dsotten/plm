@@ -7,8 +7,8 @@ def main(max_test_records, gram_length, max_length):
     pickle_file = open('../pickles/ngram_model.pkl', 'rb')
     model = pickle.load(pickle_file)
     
-    test_file = "../data/test/10k_methods.txt"
-    with open(test_file, encoding="utf8") as file:
+    test_file = "../data/methods_30k.txt"
+    with open(test_file, encoding="utf-8") as file:
         lines = [line.rstrip() for line in file]
         random.shuffle(lines)
         lines = lines[0:max_test_records]
@@ -16,7 +16,7 @@ def main(max_test_records, gram_length, max_length):
         for line in lines:
             line = line.split()
                          
-            context = line[:gram_length]
+            context = line[:gram_length-1]
           
             completion = model.sample(context, max_length)
             print(" ".join(completion))

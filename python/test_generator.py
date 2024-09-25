@@ -3,25 +3,25 @@ import sys
 import javalang
 
 def tokenize_java(code):
-    tokens = list(javalang.tokenizer.tokenize(code))
-    tokens = [code.value for code in tokens]
-    return tokens
+    try:
+        tokens = list(javalang.tokenizer.tokenize(code))
+        tokens = [code.value for code in tokens]
+        return tokens
+    except Exception as e:
+        raise Exception from e
 
 def process_json_file(input_file, output_file):
     error_count = 0
 
-    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+    with open(input_file, 'r', encoding="utf-8") as infile, open(output_file, 'w', encoding="utf-8") as outfile:
         for line in infile:
             try:
                 record = json.loads(line)
                 content = record.get('content', '')
                 tokens = tokenize_java(content)
                 flattened = ' '.join(tokens)
-                outfile.write(flattened + '\n')
-
-            except json.JSONDecodeError:
-                error_count += 1
-                print(f"Skipping invalid JSON: {line.strip()}")
+                if flattened:
+                    outfile.write(flattened + '\n')
 
             except Exception as e:
                 error_count += 1

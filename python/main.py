@@ -1,5 +1,4 @@
 import sys
-import json
 import pickle
 import random
 from collections import defaultdict
@@ -10,8 +9,6 @@ def load_dataset(path):
     dataset = []
     with open(path, 'r', encoding='utf-8') as file:
         for line in file:
-           line = json.loads(line)
-           line = line["content"]
            dataset.append(line)
 
     return dataset
