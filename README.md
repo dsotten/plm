@@ -1,6 +1,6 @@
-# Project Name
+# PLM (probabilistic language model)
 
-Probabalistic language model built by the following authors:
+Probabilistic language model built by the following authors:
 
 - Nishat Sultana
 - Danny Otten
