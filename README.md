@@ -26,9 +26,9 @@ Follow these steps to install and set up the project:
    ```
 
 3. Pull the data:
- ```
- git lfs pull
- ```
+   ```
+   git lfs pull
+   ```
 
 4. Install dependencies:
    ```
